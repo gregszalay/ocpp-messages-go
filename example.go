@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/chargerevolution/ocpp-go/types/BootNotificationRequest"
+	"github.com/gregszalay/ocpp-go/types/BootNotificationRequest"
 )
 
 func main() {
@@ -33,6 +33,6 @@ func main() {
 		fmt.Printf("Failed OCPP message json unmarshal. Error: %s", unmarshal_err)
 	}
 	// Print result
-	fmt.Printf("Example OCPP message successfully unmarshalled.\nObject:\n%+v\n", req)
+	fmt.Printf("Example OCPP message successfully unmarshalled uding the types.\nObject:\n%+v\n", req)
 
 }
