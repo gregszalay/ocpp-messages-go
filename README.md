@@ -7,6 +7,8 @@ Run **example.go** to see the types working
 
 To re-generate types from schemas (if needed):
 
+    go install github.com/atombender/go-jsonschema/cmd/gojsonschema@latest
+
     ./generate.sh
 
 Generated with: https://github.com/atombender/go-jsonschema
