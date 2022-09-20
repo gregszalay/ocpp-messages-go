@@ -1,4 +1,4 @@
-module github.com/gregszalay/ocpp-go
+module github.com/gregszalay/ocpp-messages-go
 
 go 1.18
 
