@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gregszalay/ocpp-go/types/BootNotificationRequest"
+	"github.com/gregszalay/ocpp-messages-go/types/BootNotificationRequest"
 	"github.com/sanity-io/litter"
 )
 
 func createExampleJSONString() string {
 	// Create example OCPP message object (e.g. BootNotificationRequest)
 	boot_req := BootNotificationRequest.BootNotificationRequestJson{
-		Reason: "Unknown",
+		Reason: "PowerUp",
 		ChargingStation: BootNotificationRequest.ChargingStationType{
 			Model:      "super-charger-6000",
 			VendorName: "WattsUp",
