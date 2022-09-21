@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/gregszalay/ocpp-messages-go/types/BootNotificationRequest"
+	"github.com/gregszalay/ocpp-messages-go/wrappers"
 	"github.com/sanity-io/litter"
 )
 
-func createExampleJSONString() string {
+func createExampleJSONString() []byte {
 	// Create example OCPP message object (e.g. BootNotificationRequest)
 	boot_req := BootNotificationRequest.BootNotificationRequestJson{
 		Reason: "PowerUp",
@@ -18,12 +20,15 @@ func createExampleJSONString() string {
 		},
 	}
 
-	// Create JSON string from example object
-	boot_req_json_string, marshal_err := json.MarshalIndent(boot_req, "", "  ")
-	if marshal_err != nil {
-		fmt.Printf("Failed OCPP message json marshal. Error: %s", marshal_err)
+	// All OCPP messages need to be wrapped into a CALL, CALLRESULT or CALLERROR type
+	call_wrapper := wrappers.CALL{
+		MessageTypeId: wrappers.CALL_TYPE,
+		MessageId:     uuid.NewString(),
+		Action:        "BootNotification",
+		Payload:       boot_req,
 	}
-	return string(boot_req_json_string)
+
+	return call_wrapper.Marshal()
 }
 
 func main() {
@@ -35,13 +40,31 @@ func main() {
 	fmt.Printf("%s\n", example_message)
 	fmt.Println("*******************************")
 
-	// Unmarshal JSON string to see the types in action
-	var req BootNotificationRequest.BootNotificationRequestJson
-	unmarshal_err := req.UnmarshalJSON([]byte(example_message))
-	if unmarshal_err != nil {
-		fmt.Printf("Failed OCPP message json unmarshal. Error: %s", unmarshal_err)
+	// Unmarshal CALL message
+	var call wrappers.CALL
+	call_unmarshal_err := call.UnmarshalJSON(example_message)
+	if call_unmarshal_err != nil {
+		fmt.Printf("Failed OCPP message json unmarshal. Error: %s", call_unmarshal_err)
 	} else {
-		fmt.Println("Example message unmarshalled using the types:")
+		fmt.Println("Example CALL message unmarshalled using the types:")
+		fmt.Println("*******************************")
+		litter.Dump(call)
+	}
+	fmt.Println("*******************************")
+
+	// Re-marshal payload only
+	re_marshalled_payload, re_marshall_err := json.MarshalIndent(call.Payload, "", " ")
+	if re_marshall_err != nil {
+		fmt.Println(re_marshall_err)
+	}
+
+	// Unmarshal payload
+	var req BootNotificationRequest.BootNotificationRequestJson
+	payload_unmarshal_err := req.UnmarshalJSON(re_marshalled_payload)
+	if payload_unmarshal_err != nil {
+		fmt.Printf("Failed OCPP message json unmarshal. Error: %s", payload_unmarshal_err)
+	} else {
+		fmt.Println("Example payload unmarshalled using the types:")
 		fmt.Println("*******************************")
 		litter.Dump(req)
 	}

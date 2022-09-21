@@ -6,7 +6,7 @@ Based on: OCPP-2.0.1_part3_JSON_schemas (Download:
 Run **example.go** to see the types working
 
 To re-generate types from schemas (if needed):
-
+    
     go install github.com/atombender/go-jsonschema/cmd/gojsonschema@latest
 
     ./generate.sh
