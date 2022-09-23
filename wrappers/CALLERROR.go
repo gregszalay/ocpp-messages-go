@@ -1,6 +1,7 @@
 package wrappers
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,7 +9,7 @@ import (
 
 type CALLERROR struct {
 	// This is a Message Type Number which is used to identify the type of the message.
-	MessageTypeId float64
+	MessageTypeId uint32
 	// This must be the exact same id that is in the call request so that the recipient can match request and result.
 	MessageId string
 	// This field must contain a string from the RPC Framework Error Codes table.
@@ -56,7 +57,7 @@ func (j *CALLERROR) UnmarshalJSON(b []byte) error {
 		return fmt.Errorf("CALLERROR data[4] is not a string")
 	}
 	*j = CALLERROR{
-		MessageTypeId:    message_type_id,
+		MessageTypeId:    uint32(message_type_id),
 		MessageId:        message_id,
 		ErrorCode:        error_code,
 		ErrorDescription: error_description,
@@ -73,6 +74,15 @@ func (c *CALLERROR) Marshal() []byte {
 		return []byte("")
 	}
 	return message_array_json
+}
+
+func (c *CALLERROR) MarshalPretty() []byte {
+	uglyJSON := c.Marshal()
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, []byte(uglyJSON), "", "    "); err != nil {
+		return []byte("")
+	}
+	return prettyJSON.Bytes()
 }
 
 type rpc_framework_error_code string

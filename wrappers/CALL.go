@@ -1,6 +1,7 @@
 package wrappers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -60,10 +61,34 @@ func (j *CALL) UnmarshalJSON(b []byte) error {
 
 func (c *CALL) Marshal() []byte {
 	message_array := [...]interface{}{CALL_TYPE, c.MessageId, c.Action, c.Payload}
-	message_array_json, err := json.Marshal(message_array)
+	result, err := json.Marshal(message_array)
 	if err != nil {
 		fmt.Printf("Could not marshal CALL message: %s\n", err)
 		return []byte("")
 	}
-	return message_array_json
+	return result
+}
+
+func (c *CALL) MarshalPretty() []byte {
+	uglyJSON := c.Marshal()
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, []byte(uglyJSON), "", "    "); err != nil {
+		return []byte("")
+	}
+	return prettyJSON.Bytes()
+}
+
+func (c *CALL) GetPayloadAsJSON() []byte {
+	if c == nil {
+		fmt.Println("CALL object is empty")
+		return []byte("")
+	}
+	// Re-marshal payload only
+	re_marshalled_payload, re_marshall_err := json.MarshalIndent(c.Payload, "", " ")
+	if re_marshall_err != nil {
+		fmt.Println("Failed to remarshall CALL pazload to json")
+		return []byte("")
+	}
+
+	return re_marshalled_payload
 }
